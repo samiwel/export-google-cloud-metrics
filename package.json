@@ -1,0 +1,19 @@
+{
+  "name": "export-stackdriver-metrics",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "start": "node index.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "@google-cloud/monitoring": "^2.2.0",
+    "google-gax": "^2.11.2",
+    "grpc": "^1.24.6",
+    "mkdirp": "^1.0.4"
+  }
+}
