@@ -9,7 +9,7 @@ const startOfDay = d => new Date(d).setHours(0,0,0, 0);
 const endOfDay = d => new Date(d).setHours(23, 59,59,999);
 const millisToSeconds = v => Math.floor(v / 1000);
 
-const exportStackdriverMetrics = async ({startDate = Date.now(), endDate = Date.now()}) => {
+const exportGoogleCloudMetrics = async ({startDate = Date.now(), endDate = Date.now()}) => {
     const timestamp = Date.now();
 
     projects.map(async project => {
@@ -53,8 +53,8 @@ const exportStackdriverMetrics = async ({startDate = Date.now(), endDate = Date.
     })
 };
 
-exportStackdriverMetrics();
+exportGoogleCloudMetrics();
 
 module.exports = {
-    exportStackdriverMetrics,
+    exportGoogleCloudMetrics,
 }
