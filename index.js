@@ -68,5 +68,12 @@ const exportGoogleCloudMetrics = async (
 };
 
 (async () => {
-  await exportGoogleCloudMetrics();
+  const now = Date.now();
+  const SECONDS_IN_ONE_DAY = 86400;
+  const SECONDS_IN_ONE_WEEK = 7 * SECONDS_IN_ONE_DAY;
+  const SIX_WEEKS_IN_SECONDS = 6 * SECONDS_IN_ONE_WEEK;
+  await exportGoogleCloudMetrics({
+    startDate: now - SIX_WEEKS_IN_SECONDS,
+    endDate: now,
+  });
 })();
