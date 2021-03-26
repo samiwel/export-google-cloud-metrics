@@ -15,5 +15,8 @@
     "google-gax": "^2.11.2",
     "grpc": "^1.24.6",
     "mkdirp": "^1.0.4"
+  },
+  "devDependencies": {
+    "prettier": "^2.2.1"
   }
 }
