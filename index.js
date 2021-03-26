@@ -5,16 +5,12 @@ const grpc = require("grpc");
 const metricDescriptors = require("./metricDescriptors.json");
 const projects = require("./projects.json");
 
-const startOfDay = (d) => new Date(d).setHours(0, 0, 0, 0);
-const endOfDay = (d) => new Date(d).setHours(23, 59, 59, 999);
 const millisToSeconds = (v) => Math.floor(v / 1000);
 
 const ONE_MINUTE_IN_SECONDS = 60;
 const FIVE_MINUTES_IN_SECONDS = 5 * ONE_MINUTE_IN_SECONDS;
 
-const exportGoogleCloudMetrics = async (
-  { startDate, endDate } = { startDate: Date.now(), endDate: Date.now() }
-) => {
+const exportGoogleCloudMetrics = async ({ startDate, endDate }) => {
   const timestamp = Date.now();
 
   projects.map(async (project) => {
@@ -32,10 +28,10 @@ const exportGoogleCloudMetrics = async (
           filter: `metric.type="${metricDescriptor}"`,
           interval: {
             startTime: {
-              seconds: millisToSeconds(startOfDay(startDate)),
+              seconds: millisToSeconds(startDate),
             },
             endTime: {
-              seconds: millisToSeconds(endOfDay(endDate)),
+              seconds: millisToSeconds(endDate),
             },
           },
           aggregation: {
@@ -73,7 +69,7 @@ const exportGoogleCloudMetrics = async (
   const SECONDS_IN_ONE_WEEK = 7 * SECONDS_IN_ONE_DAY;
   const SIX_WEEKS_IN_SECONDS = 6 * SECONDS_IN_ONE_WEEK;
   await exportGoogleCloudMetrics({
-    startDate: now - SIX_WEEKS_IN_SECONDS,
+    startDate: now - SIX_WEEKS_IN_SECONDS * 1000,
     endDate: now,
   });
 })();
