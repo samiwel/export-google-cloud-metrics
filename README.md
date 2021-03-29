@@ -11,6 +11,8 @@ Install dependencies with Yarn.
 yarn install
 ```
 
+Filter the [./metricDescriptors.json](metric descriptors) file to include only the metrics you care about exporting.
+
 Run the export script with
 ```
 yarn start <startDate> <endDate>
