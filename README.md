@@ -13,17 +13,7 @@ yarn install
 
 Run the export script with
 ```
-yarn start
-```
-
-The script defaults to getting the metrics for the current date. 
-
-This can be customised by passing in additonal arguments for the start and end dates on the command line.
-
-```
 yarn start <startDate> <endDate>
 ```
 
-The start and end dates should be in ISO format e.g. 2021-03-29T08:00.000Z
-
-If no end date is specified then the script will extract metrics for the start date only.
+The start and end dates should be in ISO format e.g. `2021-03-29T08:00:00.000Z`
