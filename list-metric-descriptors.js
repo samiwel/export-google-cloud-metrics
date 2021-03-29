@@ -10,15 +10,7 @@ const listMetricDescriptors = async ({ project }) => {
     name: `projects/${project}`,
   });
 
-  const data = metricDescriptors.map(
-    ({ type, description, displayName, metricKind, valueType }) => ({
-      type,
-      description,
-      displayName,
-      metricKind,
-      valueType,
-    })
-  );
+  const data = metricDescriptors.map(({ type }) => type);
 
   await fs.writeFile("metricDescriptors.json", JSON.stringify(data, null, 2));
 
