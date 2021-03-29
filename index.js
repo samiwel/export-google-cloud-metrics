@@ -25,7 +25,7 @@ const exportGoogleCloudMetrics = async ({ startDate, endDate }) => {
       });
 
       await Promise.all(
-        metricDescriptors.map(async ({ type: metricDescriptor }) => {
+        metricDescriptors.map(async (metricDescriptor) => {
           console.log(
             `|-- Gathering timeSeries for metric type ${metricDescriptor}`
           );
