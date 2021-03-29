@@ -10,9 +10,13 @@ const millisToSeconds = (v) => Math.floor(v / 1000);
 const ONE_MINUTE_IN_SECONDS = 60;
 const FIVE_MINUTES_IN_SECONDS = 5 * ONE_MINUTE_IN_SECONDS;
 
+function parseISOString(s) {
+  const b = s.split(/\D+/);
+  return new Date(Date.UTC(b[0], --b[1], b[2], b[3], b[4], b[5], b[6]));
+}
+
 const exportGoogleCloudMetrics = async ({ startDate, endDate }) => {
   const timestamp = Date.now();
-
   projects.map(async (project) => {
     const client = new monitoring.MetricServiceClient({
       projectId: project,
@@ -28,10 +32,10 @@ const exportGoogleCloudMetrics = async ({ startDate, endDate }) => {
           filter: `metric.type="${metricDescriptor}"`,
           interval: {
             startTime: {
-              seconds: millisToSeconds(startDate),
+              seconds: millisToSeconds(startDate.getTime()),
             },
             endTime: {
-              seconds: millisToSeconds(endDate),
+              seconds: millisToSeconds(endDate.getTime()),
             },
           },
           aggregation: {
@@ -60,16 +64,36 @@ const exportGoogleCloudMetrics = async ({ startDate, endDate }) => {
         console.error(e);
       }
     });
+
+    await client.close();
   });
 };
 
 (async () => {
-  const now = Date.now();
-  const SECONDS_IN_ONE_DAY = 86400;
-  const SECONDS_IN_ONE_WEEK = 7 * SECONDS_IN_ONE_DAY;
-  const SIX_WEEKS_IN_SECONDS = 6 * SECONDS_IN_ONE_WEEK;
+  const now = new Date();
+
+  let startDate;
+  let endDate;
+
+  if (process.argv.length > 2) {
+    startDate = parseISOString(process.argv[2]);
+    if (process.argv.length > 3) {
+      endDate = parseISOString(process.argv[3]);
+    }
+
+    if (startDate && endDate && startDate > endDate) {
+      console.error(
+        `Start date must be before end date. ${JSON.stringify({
+          startDate,
+          endDate,
+        })}`
+      );
+      process.exit(1);
+    }
+  }
+
   await exportGoogleCloudMetrics({
-    startDate: now - SIX_WEEKS_IN_SECONDS * 1000,
-    endDate: now,
+    startDate: startDate || now,
+    endDate: endDate || startDate || now,
   });
 })();
