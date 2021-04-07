@@ -17,61 +17,61 @@ function parseISOString(s) {
 
 const exportGoogleCloudMetrics = async ({ startDate, endDate }) => {
   const timestamp = Date.now();
-  await Promise.all(
-    projects.map(async (project) => {
-      const client = new monitoring.MetricServiceClient({
-        projectId: project,
-        grpc,
-      });
 
-      await Promise.all(
-        metricDescriptors.map(async (metricDescriptor) => {
-          console.log(
-            `|-- Gathering timeSeries for metric type ${metricDescriptor}`
-          );
-          try {
-            const [results] = await client.listTimeSeries({
-              name: client.projectPath(project),
-              filter: `metric.type="${metricDescriptor}"`,
-              interval: {
-                startTime: {
-                  seconds: millisToSeconds(startDate.getTime()),
-                },
-                endTime: {
-                  seconds: millisToSeconds(endDate.getTime()),
-                },
-              },
-              aggregation: {
-                alignmentPeriod: {
-                  seconds: FIVE_MINUTES_IN_SECONDS,
-                },
-              },
-            });
+  let client;
 
-            if (results.length === 0) {
-              return;
-            }
+  for (let project of projects) {
+    client = new monitoring.MetricServiceClient({
+      projectId: project,
+      grpc,
+    });
 
-            const parts = metricDescriptor.split("/");
-            const path = `${timestamp}/${project}/${parts
-              .slice(0, parts.length - 1)
-              .join("/")}`;
-            await mkdirp(path);
-
-            await fs.writeFile(
-              `${path}/${parts[parts.length - 1]}.json`,
-              JSON.stringify(results)
-            );
-          } catch (e) {
-            console.error(
-              `Failed to get timeSeries data for ${metricDescriptor}`
-            );
-            console.error(e);
-          }
-        })
+    for (let metricDescriptor of metricDescriptors) {
+      console.log(
+        `|-- Gathering timeSeries for metric type ${metricDescriptor}`
       );
-    })
-  );
+
+      try {
+        const [results] = await client.listTimeSeries({
+          name: client.projectPath(project),
+          filter: `metric.type="${metricDescriptor}"`,
+          interval: {
+            startTime: {
+              seconds: millisToSeconds(startDate.getTime()),
+            },
+            endTime: {
+              seconds: millisToSeconds(endDate.getTime()),
+            },
+          },
+          aggregation: {
+            alignmentPeriod: {
+              seconds: FIVE_MINUTES_IN_SECONDS,
+            },
+          },
+        });
+
+        if (results.length === 0) {
+          return;
+        }
+
+        const parts = metricDescriptor.split("/");
+        const path = `${timestamp}/${project}/${parts
+          .slice(0, parts.length - 1)
+          .join("/")}`;
+        await mkdirp(path);
+
+        await fs.writeFile(
+          `${path}/${parts[parts.length - 1]}.json`,
+          JSON.stringify(results)
+        );
+      } catch (e) {
+        console.error(`Failed to get timeSeries data for ${metricDescriptor}`);
+        console.error(e);
+      }
+    }
+
+    await client.close();
+  }
 };
 
 (async () => {
