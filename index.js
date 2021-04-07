@@ -28,7 +28,7 @@ const exportGoogleCloudMetrics = async ({ startDate, endDate }) => {
 
     for (let metricDescriptor of metricDescriptors) {
       console.log(
-        `|-- Gathering timeSeries for metric type ${metricDescriptor}`
+        `Gathering timeSeries for metric type ${metricDescriptor}...`
       );
 
       try {
@@ -69,8 +69,6 @@ const exportGoogleCloudMetrics = async ({ startDate, endDate }) => {
         console.error(e);
       }
     }
-
-    await client.close();
   }
 };
 
