@@ -51,7 +51,7 @@ const exportGoogleCloudMetrics = async ({ startDate, endDate }) => {
         });
 
         if (results.length === 0) {
-          return;
+          continue;
         }
 
         const parts = metricDescriptor.split("/");
